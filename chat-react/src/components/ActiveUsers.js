@@ -14,12 +14,12 @@ var ActiveUsers = React.createClass({
 
   render: function () {
 
-    var activeUsers = this.props.list.map(function (user) {
-      return (<User key={user.fb_id} firstName={user.first_name} lastName={user.last_name} />);
+    var activeUsers = this.props.list.map(function (user, idx) {
+      return (<User key={idx} firstName={user.first_name} lastName={user.last_name} />);
     })
 
     return (
-      <div className="active-users">
+      <div className='active-users'>
         {activeUsers}
       </div>
     );

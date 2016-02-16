@@ -22,11 +22,11 @@ var ChatMessage = React.createClass({
     var delivered = this.props.delivered ? '' : 'not-delivered';
     var user = this.props.user;
     return (
-      <div className="chat-message">
-        <div className={"align-" + align + ' ' + delivered}>
+      <div className='chat-message'>
+        <div className={'align-' + align + ' ' + delivered}>
           <User firstName={user.first_name} lastName={user.last_name} />
-          <div className="body">{this.props.body}</div>
-          <div className="date">{this.props.date}</div>
+          <div className='body'>{this.props.body}</div>
+          <div className='date'>{this.props.date}</div>
         </div>
       </div>
     );

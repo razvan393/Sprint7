@@ -8,17 +8,17 @@ var ChatInput = React.createClass({
 
   onSubmit: function (event) {
     event.preventDefault();
-    var body = "HELLOOO!";
+    var body = this.refs.value;
     this.props.onSubmit(body);
   },
 
   render: function () {
 
     return (
-      <div className="chat-input">
+      <div className='chat-input'>
         <form onSubmit={this.onSubmit}>
-          <input placeholder="type here..."/>
-          <input type="submit"/>
+          <input ref='message' placeholder='type here...'/>
+          <input type='submit'/>
         </form>
       </div>
     );

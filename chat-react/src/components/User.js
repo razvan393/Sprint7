@@ -8,8 +8,8 @@ var User = React.createClass({
 
   render: function () {
     return (
-      <span className="active-user">
-        <span className="green-dot"/>
+      <span className='active-user'>
+        <span className='green-dot'/>
         <span>{this.props.firstName}</span> <span>{this.props.lastName}</span>
       </span>
     );
