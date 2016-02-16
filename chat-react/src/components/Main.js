@@ -9,6 +9,7 @@ import ActiveUsers from './ActiveUsers';
 import User from './User';
 
 import API from './api';
+import FacebookLogin from 'react-facebook-login';
 
 var AppComponent = React.createClass({
   getInitialState: function () {
@@ -20,9 +21,9 @@ var AppComponent = React.createClass({
       isLoggedIn: false,
 
       currentUser: {
-        fb_id: '1307233471',
-        first_name: 'Razvan',
-        last_name: 'Bolovan'
+        fb_id: '',
+        first_name: '',
+        last_name: ''
       }
     }
   },
@@ -56,17 +57,28 @@ var AppComponent = React.createClass({
   componentWillMount: function () {
     this.fetchUsers();
     setInterval(this.fetchUsers, 3000);
-
-    this.fetchUser().then(function () {
-      this.fetchMessages();
-      setInterval(this.fetchMessages, 2000);
-    }.bind(this));
   },
 
   onSubmit: function (body) {
+    var messageLog = this.state.messageLog;
+    messageLog.unshift({
+      participant: this.state.currentUser,
+      date: new Date() + ' ',
+      body: body,
+      id: false
+    });
+
     API.sendMessage(body, this.state.currentUser)
       .then(function (json) {
       }.bind(this));
+  },
+
+  logout: function () {
+    this.setState({
+      isLoggedIn: false
+    }, function () {
+      FB.logout();
+    });
   },
 
   renderChat: function () {
@@ -87,6 +99,7 @@ var AppComponent = React.createClass({
 
       <div className='chat-view'>
         <ActiveUsers list={this.state.activeUsers}/>
+        <span>Hello {this.state.currentUser.first_name} | <a href="#" onClick={this.logout}>Logout</a></span>
         <ChatLog>
           {chatMessages}
         </ChatLog>
@@ -95,10 +108,33 @@ var AppComponent = React.createClass({
     )
   },
 
+  responseFacebook: function (response) {
+    var fb_id = response.id;
+    var first_name = response.name.split(' ')[0];
+    var last_name = response.name.split(' ')[1];
+
+    this.setState({
+      isLoggedIn: true,
+      currentUser: {
+        fb_id: fb_id,
+        first_name: first_name,
+        last_name: last_name
+      }
+    }, function () {
+      this.fetchUser().then(function () {
+        this.fetchMessages();
+        setInterval(this.fetchMessages, 2000);
+      }.bind(this));
+    }.bind(this));
+  },
+
   renderLogin: function () {
-    return(
+    return (
       <div className="login-view">
-        <a href="#">Login with Facebook</a>
+        <FacebookLogin
+          appId="1030499273678445"
+          autoLoad={true}
+          callback={this.responseFacebook}/>
       </div>
     )
   },
