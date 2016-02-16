@@ -6,58 +6,9 @@ import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
 import ChatLog from './ChatLog';
 import ActiveUsers from './ActiveUsers';
+import User from './User';
 
-const API = {
-  base: 'http://192.168.1.114:9000/api/',
-
-  fetchUsers: function () {
-    var url = this.base + 'participants';
-    return fetch(url).then(function (response) {
-      return response.json()
-    });
-  },
-
-  fetchUser: function (currentUser) {
-    var url = this.base + 'participants';
-    var attr = {
-      method: 'post',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(currentUser)
-    };
-    return fetch(url, attr)
-      .then(function (response) {
-        return response.json();
-      });
-  },
-
-  fetchMessages: function (currentUser) {
-    var url = this.base + 'messages/' + currentUser.id;
-
-    return fetch(url).then(function (response) {
-      return response.json()
-    });
-  },
-
-  sendMessage: function (body, currentUser) {
-    var url = this.base + 'messages/' + currentUser.id;
-    var attr = {
-      method: 'post',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({body: body})
-    };
-
-    return fetch(url, attr)
-      .then(function (response) {
-        return response.json();
-      });
-  }
-};
+import API from './api';
 
 var AppComponent = React.createClass({
   getInitialState: function () {
@@ -66,12 +17,12 @@ var AppComponent = React.createClass({
 
       messageLog: [],
 
-      isLoggedIn: true,
+      isLoggedIn: false,
 
       currentUser: {
         fb_id: '1307233471',
-        first_name: 'Vlad',
-        last_name: 'Goran'
+        first_name: 'Razvan',
+        last_name: 'Bolovan'
       }
     }
   },
@@ -115,11 +66,10 @@ var AppComponent = React.createClass({
   onSubmit: function (body) {
     API.sendMessage(body, this.state.currentUser)
       .then(function (json) {
-
       }.bind(this));
   },
 
-  render: function () {
+  renderChat: function () {
     var currentUser = this.state.currentUser;
     var chatMessages = this.state.messageLog.map(function (message) {
       var alignRight = (currentUser.fb_id === message.participant.fb_id);
@@ -133,14 +83,32 @@ var AppComponent = React.createClass({
         alignRight={alignRight}
       />)
     });
-
     return (
-      <div className="app">
+
+      <div className='chat-view'>
         <ActiveUsers list={this.state.activeUsers}/>
         <ChatLog>
           {chatMessages}
         </ChatLog>
         <ChatInput onSubmit={this.onSubmit}/>
+      </div>
+    )
+  },
+
+  renderLogin: function () {
+    return(
+      <div className="login-view">
+        <a href="#">Login with Facebook</a>
+      </div>
+    )
+  },
+
+  render: function () {
+
+    return (
+      <div className="app">
+        { this.state.isLoggedIn ? this.renderChat() : this.renderLogin() }
+
       </div>
     );
   }
